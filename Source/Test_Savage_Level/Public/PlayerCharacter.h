@@ -13,6 +13,15 @@ class APlayerController;
 
 #include "PlayerCharacter.generated.h"
 
+UENUM(BlueprintType)
+enum class EPlayerCharacterState : uint8
+{
+	IdleRun,
+	Aim,
+	Reload,
+	Dead
+};
+
 UCLASS()
 class APlayerCharacter : public ACharacter
 {
@@ -33,8 +42,10 @@ public:
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
-	bool IsAiming();
 	bool IsShooting();
+	EPlayerCharacterState GetCurrentState();
+
+	void EndReload();
 
 private:
 	void MoveForward(float Value);
@@ -50,6 +61,8 @@ private:
 
 	void AimToCursor(float DeltaTime);
 
+	void Reload();
+
 private:
 	UCharacterMovementComponent* CharacterMovement;
 
@@ -60,17 +73,24 @@ private:
 	UCameraComponent* Camera;
 
 	UPROPERTY(Category = PlayerCharacter, EditAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
+	float ReloadWalkSpeed = 400.f;
+	UPROPERTY(Category = PlayerCharacter, EditAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
 	float AimSpeed = 300.f;
 	float RunSpeed;
 
-	UPROPERTY(Category = PlayerCharacter, EditAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
+	UPROPERTY(Category = "PlayerCharacter|Weapon", EditAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
 	float gunOffset = 85.f;
 
 	float ShootTimer;
-	UPROPERTY(Category = PlayerCharacter, EditAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
+
+	UPROPERTY(Category = "PlayerCharacter|Weapon", BlueprintReadWrite, EditAnywhere, meta = (ClampMin = "0", AllowPrivateAccess = "true"))
+	int MaxAmmo = 50;
+	int ClipAmmo;
+
+	UPROPERTY(Category = "PlayerCharacter|Weapon", EditAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
 	float FireRate = 0.24f;
 
-	bool bIsAiming = false;
+	EPlayerCharacterState CurrentState = EPlayerCharacterState::IdleRun;
 	bool bIsShooting = false;
 
 	APlayerController* PlayerController;

@@ -44,6 +44,7 @@ void APlayerCharacter::BeginPlay()
 		RunSpeed = CharacterMovement->MaxWalkSpeed;
 
 	ShootTimer = 0.f;
+	ClipAmmo = MaxAmmo;
 }
 
 // Called every frame
@@ -51,7 +52,7 @@ void APlayerCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
-	if (IsAiming())
+	if (CurrentState == EPlayerCharacterState::Aim)
 	{
 		AimToCursor(DeltaTime);
 		if (IsShooting())
@@ -79,6 +80,8 @@ void APlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCom
 
 	InputComponent->BindAction("Shoot", EInputEvent::IE_Pressed, this, &APlayerCharacter::StartShoot);
 	InputComponent->BindAction("Shoot", EInputEvent::IE_Released, this, &APlayerCharacter::EndShoot);
+
+	InputComponent->BindAction("Reload", EInputEvent::IE_Pressed, this, &APlayerCharacter::Reload);
 }
 
 void APlayerCharacter::MoveForward(float Value)
@@ -99,7 +102,10 @@ void APlayerCharacter::MoveRight(float Value)
 
 void APlayerCharacter::StartAim()
 {
-	bIsAiming = true;
+	if (CurrentState != EPlayerCharacterState::IdleRun)
+		return;
+
+	CurrentState = EPlayerCharacterState::Aim;
 
 	if (CharacterMovement)
 	{
@@ -115,8 +121,12 @@ void APlayerCharacter::StartAim()
 
 void APlayerCharacter::EndAim()
 {
-	bIsAiming = false;
+	if (CurrentState == EPlayerCharacterState::Reload)
+		return;
+
 	bIsShooting = false;
+
+	CurrentState = EPlayerCharacterState::IdleRun;
 
 	if (CharacterMovement)
 	{
@@ -130,9 +140,9 @@ void APlayerCharacter::EndAim()
 	bUseControllerRotationYaw = false;
 }
 
-bool APlayerCharacter::IsAiming()
+EPlayerCharacterState APlayerCharacter::GetCurrentState()
 {
-	return bIsAiming;
+	return CurrentState;
 }
 
 bool APlayerCharacter::IsShooting()
@@ -142,7 +152,7 @@ bool APlayerCharacter::IsShooting()
 
 void APlayerCharacter::StartShoot()
 {
-	if (IsAiming())
+	if (CurrentState == EPlayerCharacterState::Aim)
 	{
 		bIsShooting = true;
 		ShootTimer = FireRate;
@@ -151,16 +161,28 @@ void APlayerCharacter::StartShoot()
 
 void APlayerCharacter::EndShoot()
 {
+	if (CurrentState == EPlayerCharacterState::Reload)
+		return;
+
 	bIsShooting = false;
 }
 
 void APlayerCharacter::FireShoot()
 {
-	FRotator rotator = GetControlRotation();
-	rotator.Pitch = 0.f;
-	rotator.Roll = 0.f;
-	FVector location = GetActorLocation() + rotator.Vector() * gunOffset;
-	GetWorld()->SpawnActor(ProjectileClass, &location, &rotator);
+	if (ClipAmmo <= 0)
+	{ 
+		EndShoot();
+	}
+	else
+	{
+		--ClipAmmo;
+
+		FRotator rotator = GetControlRotation();
+		rotator.Pitch = 0.f;
+		rotator.Roll = 0.f;
+		FVector location = GetActorLocation() + rotator.Vector() * gunOffset;
+		GetWorld()->SpawnActor(ProjectileClass, &location, &rotator);
+	}
 }
 
 void APlayerCharacter::AimToCursor(float DeltaTime)
@@ -175,4 +197,29 @@ void APlayerCharacter::AimToCursor(float DeltaTime)
 		FRotator newControlRotation = UKismetMathLibrary::RInterpTo(GetActorRotation(), lookAt, DeltaTime, 33);
 		PlayerController->SetControlRotation(newControlRotation);
 	}
+}
+
+void APlayerCharacter::Reload()
+{
+	if (CurrentState == EPlayerCharacterState::Reload || ClipAmmo >= MaxAmmo)
+		return;
+
+	if (bIsShooting)
+		EndShoot();
+
+	if (CurrentState == EPlayerCharacterState::Aim)
+		EndAim();
+
+	CurrentState = EPlayerCharacterState::Reload;
+	CharacterMovement->MaxWalkSpeed = ReloadWalkSpeed;
+}
+
+void APlayerCharacter::EndReload()
+{
+	if (CurrentState != EPlayerCharacterState::Reload)
+		return;
+
+	ClipAmmo = MaxAmmo;
+	CurrentState = EPlayerCharacterState::IdleRun;
+	CharacterMovement->MaxWalkSpeed = RunSpeed;
 }

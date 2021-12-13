@@ -2,6 +2,7 @@
 
 
 #include "PlayerCharacterAnimInstance.h"
+#include "AnimationsUtilities.h"
 
 void UPlayerCharacterAnimInstance::NativeInitializeAnimation()
 {
@@ -18,5 +19,7 @@ void UPlayerCharacterAnimInstance::NativeUpdateAnimation(float DeltaSeconds)
 
 	Speed = velocity.Size();
 	Direction = CalculateDirection(velocity, playerRotation);
-	bIsAiming = PlayerCharacter->IsAiming();
+	PlayerCharacterState = PlayerCharacter->GetCurrentState();
+
+	UAnimationsUtilities::UpdateMontagePlayState(this, ReloadMontage, PlayerCharacterState == EPlayerCharacterState::Reload);
 }

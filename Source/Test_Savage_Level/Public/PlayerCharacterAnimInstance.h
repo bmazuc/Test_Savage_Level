@@ -26,8 +26,11 @@ private:
 	UPROPERTY(Category = PlayerCharacter, Transient, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
 		float Direction;
 
-	UPROPERTY(Category = PlayerCharacter, Transient, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
-		bool bIsAiming;
-
 	APlayerCharacter* PlayerCharacter;
+
+	UPROPERTY(Category = PlayerCharacter, Transient, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
+	EPlayerCharacterState PlayerCharacterState;
+
+	UPROPERTY(Category = "Resources|Montages", EditAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
+	UAnimMontage* ReloadMontage;
 };
