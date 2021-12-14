@@ -83,9 +83,15 @@ private:
 
 	float ShootTimer;
 
-	UPROPERTY(Category = "PlayerCharacter|Weapon", BlueprintReadWrite, EditAnywhere, meta = (ClampMin = "0", AllowPrivateAccess = "true"))
+	UPROPERTY(Category = "PlayerCharacter|Weapon", EditAnywhere, BlueprintReadWrite, meta = (ClampMin = "0", AllowPrivateAccess = "true"))
 	int MaxAmmo = 50;
+	UPROPERTY(Category = "PlayerCharacter|Weapon", BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
 	int ClipAmmo;
+
+	UPROPERTY(Category = "PlayerCharacter|Weapon", EditAnywhere, BlueprintReadWrite, meta = (ClampMin = "0", AllowPrivateAccess = "true"))
+	int MaxClip = 9;
+	UPROPERTY(Category = "PlayerCharacter|Weapon", BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
+	int ClipCount;
 
 	UPROPERTY(Category = "PlayerCharacter|Weapon", EditAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
 	float FireRate = 0.24f;

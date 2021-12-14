@@ -45,6 +45,7 @@ void APlayerCharacter::BeginPlay()
 
 	ShootTimer = 0.f;
 	ClipAmmo = MaxAmmo;
+	ClipCount = MaxClip;
 }
 
 // Called every frame
@@ -201,7 +202,7 @@ void APlayerCharacter::AimToCursor(float DeltaTime)
 
 void APlayerCharacter::Reload()
 {
-	if (CurrentState == EPlayerCharacterState::Reload || ClipAmmo >= MaxAmmo)
+	if (CurrentState == EPlayerCharacterState::Reload || ClipAmmo >= MaxAmmo || ClipCount <= 0)
 		return;
 
 	if (bIsShooting)
@@ -219,6 +220,7 @@ void APlayerCharacter::EndReload()
 	if (CurrentState != EPlayerCharacterState::Reload)
 		return;
 
+	--ClipCount;
 	ClipAmmo = MaxAmmo;
 	CurrentState = EPlayerCharacterState::IdleRun;
 	CharacterMovement->MaxWalkSpeed = RunSpeed;
