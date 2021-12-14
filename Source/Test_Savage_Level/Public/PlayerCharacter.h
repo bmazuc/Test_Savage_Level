@@ -47,6 +47,13 @@ public:
 
 	void EndReload();
 
+	// Return false if clip is already maxed.
+	bool IncreasePlayerClip(int clip);
+	// Return false if full health.
+	bool Heal(int health);
+
+	void TempTakeDamage();
+
 private:
 	void MoveForward(float Value);
 	void MoveRight(float Value);
@@ -103,4 +110,9 @@ private:
 
 	UPROPERTY(Category = PlayerCharacter, EditAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
 	TSubclassOf<AProjectile> ProjectileClass;
+
+	UPROPERTY(Category = "PlayerCharacter|Health", EditAnywhere, BlueprintReadWrite, meta = (ClampMin = "0", AllowPrivateAccess = "true"))
+	int MaxHealth = 100;
+	UPROPERTY(Category = "PlayerCharacter|Health", BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
+	int CurrentHealth;
 };

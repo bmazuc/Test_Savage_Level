@@ -46,6 +46,7 @@ void APlayerCharacter::BeginPlay()
 	ShootTimer = 0.f;
 	ClipAmmo = MaxAmmo;
 	ClipCount = MaxClip;
+	CurrentHealth = MaxHealth;
 }
 
 // Called every frame
@@ -83,6 +84,8 @@ void APlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCom
 	InputComponent->BindAction("Shoot", EInputEvent::IE_Released, this, &APlayerCharacter::EndShoot);
 
 	InputComponent->BindAction("Reload", EInputEvent::IE_Pressed, this, &APlayerCharacter::Reload);
+
+	InputComponent->BindAction("TempTakeDamage", EInputEvent::IE_Pressed, this, &APlayerCharacter::TempTakeDamage);
 }
 
 void APlayerCharacter::MoveForward(float Value)
@@ -224,4 +227,33 @@ void APlayerCharacter::EndReload()
 	ClipAmmo = MaxAmmo;
 	CurrentState = EPlayerCharacterState::IdleRun;
 	CharacterMovement->MaxWalkSpeed = RunSpeed;
+}
+
+bool APlayerCharacter::IncreasePlayerClip(int clip)
+{
+	if (ClipCount >= MaxClip)
+		return false;
+
+	ClipCount += clip;
+	if (ClipCount > MaxClip)
+		ClipCount = MaxClip;
+
+	return true;
+}
+
+bool APlayerCharacter::Heal(int health)
+{
+	if (CurrentHealth >= MaxHealth)
+		return false;
+
+	CurrentHealth += health;
+	if (CurrentHealth > MaxHealth)
+		CurrentHealth = MaxHealth;
+
+	return true;
+}
+
+void APlayerCharacter::TempTakeDamage()
+{
+	CurrentHealth -= 10;
 }
