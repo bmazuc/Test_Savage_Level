@@ -20,16 +20,28 @@ public:
 	virtual void NativeUpdateAnimation(float DeltaSeconds) override;
 
 private:
-	UPROPERTY(Category = PlayerCharacter, Transient, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
-		float Speed;
+	UPROPERTY(Category = PlayerCharacterAnimInstance, Transient, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
+	float Speed;
 
-	UPROPERTY(Category = PlayerCharacter, Transient, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
-		float Direction;
+	UPROPERTY(Category = PlayerCharacterAnimInstance, Transient, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
+	float Direction;
 
 	APlayerCharacter* PlayerCharacter;
 
-	UPROPERTY(Category = PlayerCharacter, Transient, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
+	UPROPERTY(Category = PlayerCharacterAnimInstance, Transient, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
 	EPlayerCharacterState PlayerCharacterState;
+
+	UPROPERTY(Category = PlayerCharacterAnimInstance, Transient, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
+	int JogDeathIdx;
+
+	UPROPERTY(Category = PlayerCharacterAnimInstance, Transient, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
+	int AimDeathIdx;
+
+	UPROPERTY(Category = PlayerCharacterAnimInstance, EditAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
+	int JogDeathMaxRange = 2;
+
+	UPROPERTY(Category = PlayerCharacterAnimInstance, EditAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
+	int AimDeathMaxRange = 1;
 
 	UPROPERTY(Category = "Resources|Montages", EditAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
 	UAnimMontage* ReloadMontage;

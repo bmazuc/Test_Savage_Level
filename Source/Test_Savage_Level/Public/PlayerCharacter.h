@@ -13,6 +13,51 @@ class APlayerController;
 
 #include "PlayerCharacter.generated.h"
 
+USTRUCT(BlueprintType)
+struct FWeaponData
+{
+	GENERATED_BODY()
+
+public:
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	float gunOffset = 85.f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		float FireRate = 0.24f;
+
+	UPROPERTY(Category = PlayerCharacter, EditAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
+		TSubclassOf<AProjectile> ProjectileClass;
+
+// Clip and ammo datas
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (ClampMin = "0"))
+	int MaxAmmo = 50;
+	UPROPERTY(BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
+	int ClipAmmo;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (ClampMin = "0"))
+	int MaxClip = 9;
+	UPROPERTY(BlueprintReadWrite)
+	int ClipCount;
+
+// SpreadData
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+	float MinSpread = 2.f;
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+	float MaxSpread = 30.f;
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+	float WeaponSpreadPerShot = 4.f;
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+	float WeaponSpreadRecoveryRate = 1.5f;
+
+	UPROPERTY(Transient, BlueprintReadOnly)
+	float CurrentSpread;
+};
+
 UENUM(BlueprintType)
 enum class EPlayerCharacterState : uint8
 {
@@ -46,6 +91,7 @@ public:
 	EPlayerCharacterState GetCurrentState();
 
 	void EndReload();
+	void FinishDeathAnim();
 
 	// Return false if clip is already maxed.
 	bool IncreasePlayerClip(int clip);
@@ -85,31 +131,15 @@ private:
 	float AimSpeed = 300.f;
 	float RunSpeed;
 
-	UPROPERTY(Category = "PlayerCharacter|Weapon", EditAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
-	float gunOffset = 85.f;
-
 	float ShootTimer;
 
-	UPROPERTY(Category = "PlayerCharacter|Weapon", EditAnywhere, BlueprintReadWrite, meta = (ClampMin = "0", AllowPrivateAccess = "true"))
-	int MaxAmmo = 50;
-	UPROPERTY(Category = "PlayerCharacter|Weapon", BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
-	int ClipAmmo;
-
-	UPROPERTY(Category = "PlayerCharacter|Weapon", EditAnywhere, BlueprintReadWrite, meta = (ClampMin = "0", AllowPrivateAccess = "true"))
-	int MaxClip = 9;
-	UPROPERTY(Category = "PlayerCharacter|Weapon", BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
-	int ClipCount;
-
-	UPROPERTY(Category = "PlayerCharacter|Weapon", EditAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
-	float FireRate = 0.24f;
+	UPROPERTY(Category = PlayerCharacter, EditAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
+	FWeaponData WeaponData;
 
 	EPlayerCharacterState CurrentState = EPlayerCharacterState::IdleRun;
 	bool bIsShooting = false;
 
 	APlayerController* PlayerController;
-
-	UPROPERTY(Category = PlayerCharacter, EditAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
-	TSubclassOf<AProjectile> ProjectileClass;
 
 	UPROPERTY(Category = "PlayerCharacter|Health", EditAnywhere, BlueprintReadWrite, meta = (ClampMin = "0", AllowPrivateAccess = "true"))
 	int MaxHealth = 100;

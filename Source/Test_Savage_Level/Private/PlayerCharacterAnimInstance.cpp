@@ -7,6 +7,8 @@
 void UPlayerCharacterAnimInstance::NativeInitializeAnimation()
 {
 	PlayerCharacter = Cast<APlayerCharacter>(TryGetPawnOwner());
+	JogDeathIdx = FMath::RandRange(0, JogDeathMaxRange);
+	AimDeathIdx = FMath::RandRange(0, AimDeathMaxRange);
 }
 
 void UPlayerCharacterAnimInstance::NativeUpdateAnimation(float DeltaSeconds)
