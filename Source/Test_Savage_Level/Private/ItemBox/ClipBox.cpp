@@ -11,8 +11,9 @@ void AClipBox::OnBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* 
 
 	if (Character)
 	{
-		if (Character->IncreasePlayerClip(Clip))
+		if (!Character->IsFullClip())
 		{
+			Character->IncreasePlayerClip(Clip);
 			if (Spawner)
 				Spawner->DestroyBox();
 		}

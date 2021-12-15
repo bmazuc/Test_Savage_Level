@@ -48,7 +48,6 @@ void APlayerCharacter::BeginPlay()
 	WeaponData.ClipAmmo = WeaponData.MaxAmmo;
 	WeaponData.ClipCount = WeaponData.MaxClip;
 	WeaponData.CurrentSpread = 0.f;
-	CurrentHealth = MaxHealth;
 }
 
 // Called every frame
@@ -204,7 +203,8 @@ void APlayerCharacter::FireShoot()
 			lookDir.Z = zAxis;
 		}
 		FVector location = GetActorLocation() + lookDir * WeaponData.gunOffset;
-		GetWorld()->SpawnActor(WeaponData.ProjectileClass, &location, &rotator);
+		AProjectile* projectile = GetWorld()->SpawnActor<AProjectile>(WeaponData.ProjectileClass, location, rotator);
+		projectile->SetDamage(WeaponData.Damages);
 
 		//add spread
 		WeaponData.CurrentSpread = FMath::Min(WeaponData.MaxSpread, WeaponData.CurrentSpread + WeaponData.WeaponSpreadPerShot);
@@ -252,38 +252,24 @@ void APlayerCharacter::EndReload()
 	CharacterMovement->MaxWalkSpeed = RunSpeed;
 }
 
-bool APlayerCharacter::IncreasePlayerClip(int clip)
+void APlayerCharacter::IncreasePlayerClip(int clip)
 {
-	if (WeaponData.ClipCount >= WeaponData.MaxClip)
-		return false;
-
-	WeaponData.ClipCount += clip;
-	if (WeaponData.ClipCount > WeaponData.MaxClip)
-		WeaponData.ClipCount = WeaponData.MaxClip;
-
-	return true;
+	WeaponData.ClipCount = FMath::Min(WeaponData.MaxClip, WeaponData.ClipCount + clip);
 }
 
-bool APlayerCharacter::Heal(int health)
+bool APlayerCharacter::IsFullClip()
 {
-	if (CurrentHealth >= MaxHealth)
-		return false;
-
-	CurrentHealth += health;
-	if (CurrentHealth > MaxHealth)
-		CurrentHealth = MaxHealth;
-
-	return true;
+	return (WeaponData.ClipCount >= WeaponData.MaxClip);
 }
 
 void APlayerCharacter::TempTakeDamage()
 {
-	CurrentHealth -= 10;
+	TTakeDamage();
+}
 
-	if (CurrentHealth <= 0)
-	{
-		CurrentState = EPlayerCharacterState::Dead;
-	}
+void APlayerCharacter::Die()
+{
+	CurrentState = EPlayerCharacterState::Dead;
 }
 
 void APlayerCharacter::FinishDeathAnim()

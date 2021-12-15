@@ -16,6 +16,7 @@ AProjectile::AProjectile()
 
 	ProjectileMesh = CreateDefaultSubobject<UStaticMeshComponent >(TEXT("ProjectileMesh"));
 	ProjectileMesh->BodyInstance.bNotifyRigidBodyCollision = true;
+	ProjectileMesh->OnComponentHit.AddDynamic(this, &AProjectile::OnHit);
 	RootComponent = ProjectileMesh;
 
 	ProjectileMovement = CreateDefaultSubobject<UProjectileMovementComponent>(TEXT("ProjectileMovementComponent"));
@@ -23,4 +24,16 @@ AProjectile::AProjectile()
 	ProjectileMovement->MaxSpeed = 3000.f;
 	ProjectileMovement->bRotationFollowsVelocity = true;
 	ProjectileMovement->ProjectileGravityScale = 0.f;
+}
+
+void AProjectile::SetDamage(int NewDamage)
+{
+	Damage = NewDamage;
+}
+
+void AProjectile::OnHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComponent, FVector NormalImpulse, const FHitResult& Hit)
+{
+	FPointDamageEvent damageEvent = FPointDamageEvent(10.f, Hit, GetActorForwardVector(), UDamageType::StaticClass());
+	OtherActor->TakeDamage(Damage, damageEvent, nullptr, this);
+	Destroy();
 }

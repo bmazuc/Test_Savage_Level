@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
+#include "CharacterWithHealth.h"
 #include "Projectile.h"
 
 class UCharacterMovementComponent;
@@ -25,14 +26,17 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 		float FireRate = 0.24f;
 
-	UPROPERTY(Category = PlayerCharacter, EditAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 		TSubclassOf<AProjectile> ProjectileClass;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		int Damages = 10;
 
 // Clip and ammo datas
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (ClampMin = "0"))
 	int MaxAmmo = 50;
-	UPROPERTY(BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
+	UPROPERTY(BlueprintReadWrite)
 	int ClipAmmo;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (ClampMin = "0"))
@@ -68,7 +72,7 @@ enum class EPlayerCharacterState : uint8
 };
 
 UCLASS()
-class APlayerCharacter : public ACharacter
+class APlayerCharacter : public ACharacterWithHealth
 {
 	GENERATED_BODY()
 
@@ -94,11 +98,11 @@ public:
 	void FinishDeathAnim();
 
 	// Return false if clip is already maxed.
-	bool IncreasePlayerClip(int clip);
-	// Return false if full health.
-	bool Heal(int health);
+	void IncreasePlayerClip(int clip);
+	bool IsFullClip();
 
 	void TempTakeDamage();
+	void Die() override;
 
 private:
 	void MoveForward(float Value);
@@ -140,9 +144,4 @@ private:
 	bool bIsShooting = false;
 
 	APlayerController* PlayerController;
-
-	UPROPERTY(Category = "PlayerCharacter|Health", EditAnywhere, BlueprintReadWrite, meta = (ClampMin = "0", AllowPrivateAccess = "true"))
-	int MaxHealth = 100;
-	UPROPERTY(Category = "PlayerCharacter|Health", BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
-	int CurrentHealth;
 };
