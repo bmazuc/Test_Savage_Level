@@ -4,6 +4,8 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/GameModeBase.h"
+#include "Blueprint/UserWidget.h"
+#include "GameFramework/PlayerController.h"
 #include "TestSLGameMode.generated.h"
 
 /**
@@ -18,7 +20,31 @@ public:
 	void Respawn(AController* playerController);
 	void Quit();
 
+protected:
+	virtual void BeginPlay() override;
+
+	UFUNCTION(BlueprintCallable)
+	void PauseGame(bool bPause);
+
 private:
+	void EndGame();
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
 	AActor* PlayerStart;
+
+	FTimerHandle GameTimerHandle;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
+	float GameDuration = 60.f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
+	TSubclassOf<UUserWidget> EndWidgetClass;
+
+	APlayerController* PlayerController;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
+	TSubclassOf<UUserWidget> PauseWidgetClass;
+
+	UPROPERTY()
+	UUserWidget* PauseWidget;
 };
