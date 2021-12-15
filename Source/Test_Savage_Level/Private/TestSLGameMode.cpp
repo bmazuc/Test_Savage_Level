@@ -6,11 +6,24 @@
 
 void ATestSLGameMode::BeginPlay()
 {
-	GetWorld()->GetTimerManager().SetTimer(GameTimerHandle, this, &ATestSLGameMode::EndGame, GameDuration, false);
+	TimerManager = &(GetWorld()->GetTimerManager());
+	TimerManager->SetTimer(GameTimerHandle, this, &ATestSLGameMode::EndGame, GameDuration, false);
 	PlayerController = GetWorld()->GetFirstPlayerController();
 
 	if (PauseWidgetClass)
 		PauseWidget = CreateWidget<UUserWidget>(GetWorld(), PauseWidgetClass);
+
+	if (InGameWidgetClass)
+	{
+		InGameWidget = CreateWidget<UUserWidget>(GetWorld(), InGameWidgetClass);
+		if (InGameWidget)
+			InGameWidget->AddToViewport();
+	}
+}
+
+float ATestSLGameMode::GetRemainingTime()
+{
+	return TimerManager ? TimerManager->GetTimerRemaining(GameTimerHandle) : 0.f;
 }
 
 void ATestSLGameMode::Respawn(AController* playerController)
@@ -48,12 +61,18 @@ void ATestSLGameMode::PauseGame(bool bPause)
 
 	PlayerController->bShowMouseCursor = bPause;
 
-	if (PauseWidget)
+	if (PauseWidget && InGameWidget)
 	{
 		if (bPause)
+		{
+			InGameWidget->RemoveFromViewport();
 			PauseWidget->AddToViewport();
+		}
 		else
+		{
 			PauseWidget->RemoveFromViewport();
+			InGameWidget->AddToViewport();
+		}
 	}
 
 	PlayerController->SetPause(bPause);
@@ -78,6 +97,7 @@ void ATestSLGameMode::EndGame()
 			PlayerController->SetInputMode(InputModeData);
 		}
 
+		InGameWidget->RemoveFromViewport();
 		EndWidget->AddToViewport();
 	}
 

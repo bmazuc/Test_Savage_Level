@@ -23,8 +23,12 @@ public:
 protected:
 	virtual void BeginPlay() override;
 
+public:
 	UFUNCTION(BlueprintCallable)
 	void PauseGame(bool bPause);
+
+	UFUNCTION(BlueprintCallable)
+	float GetRemainingTime();
 
 private:
 	void EndGame();
@@ -37,14 +41,22 @@ private:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
 	float GameDuration = 60.f;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
+	UPROPERTY(Category = UI, EditAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
 	TSubclassOf<UUserWidget> EndWidgetClass;
 
 	APlayerController* PlayerController;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
+	UPROPERTY(Category = UI, EditAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
 	TSubclassOf<UUserWidget> PauseWidgetClass;
 
 	UPROPERTY()
 	UUserWidget* PauseWidget;
+
+	UPROPERTY(Category = UI, EditAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
+	TSubclassOf<UUserWidget> InGameWidgetClass;
+
+	UPROPERTY()
+	UUserWidget* InGameWidget;
+
+	FTimerManager* TimerManager;
 };
