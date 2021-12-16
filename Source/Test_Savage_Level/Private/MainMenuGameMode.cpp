@@ -17,7 +17,14 @@ void AMainMenuGameMode::BeginPlay()
 	UUserWidget* widget = CreateWidget<UUserWidget>(GetWorld(), WidgetClass);
 
 	if (widget)
+	{
+		if (widget->bIsFocusable && PlayerController)
+		{
+			FInputModeUIOnly InputModeData;
+			InputModeData.SetWidgetToFocus(widget->TakeWidget());
+			InputModeData.SetLockMouseToViewportBehavior(EMouseLockMode::DoNotLock);
+			PlayerController->SetInputMode(InputModeData);
+		}
 		widget->AddToViewport();
-
-
+	}
 }

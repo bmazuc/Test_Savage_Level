@@ -11,7 +11,7 @@ void AHealthBox::OnBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor
 
 	if (Character)
 	{
-		if (Character->IsFullHealth())
+		if (!Character->IsFullHealth())
 		{
 			Character->Heal(Health);
 			if (Spawner)

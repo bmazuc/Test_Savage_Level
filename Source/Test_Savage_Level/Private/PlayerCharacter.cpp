@@ -17,8 +17,10 @@ APlayerCharacter::APlayerCharacter()
 
 	CharacterMovement = GetCharacterMovement();
 	if (CharacterMovement)
+	{
+		CharacterMovement->bUseControllerDesiredRotation = true;
 		CharacterMovement->bOrientRotationToMovement = true;
-
+	}
 	bUseControllerRotationYaw = false;
 
 	// Use a spring arm to give the camera smooth, natural-feeling motion.
@@ -255,6 +257,9 @@ void APlayerCharacter::Die()
 
 void APlayerCharacter::FinishDeathAnim()
 {
+	if (Weapon)
+		Weapon->Destroy();
+
 	Destroy();
 	ATestSLGameMode* gm = Cast<ATestSLGameMode>(GetWorld()->GetAuthGameMode());
 	if (gm)
