@@ -2,6 +2,7 @@
 
 
 #include "CharacterWithHealth.h"
+#include "TestSLPlayerState.h"
 
 // Sets default values
 ACharacterWithHealth::ACharacterWithHealth()
@@ -56,5 +57,14 @@ void ACharacterWithHealth::TTakeDamage()
 
 void ACharacterWithHealth::Die()
 {
+	APlayerController* PlayerController = GetWorld()->GetFirstPlayerController();
+
+	if (PlayerController)
+	{
+		ATestSLPlayerState* playerState = PlayerController->GetPlayerState<ATestSLPlayerState>();
+		if (playerState)
+			playerState->UpdateScore(DeathScoreModifier);
+	}
+
 	Destroy();
 }

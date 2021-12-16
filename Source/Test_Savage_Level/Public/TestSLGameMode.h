@@ -6,6 +6,9 @@
 #include "GameFramework/GameModeBase.h"
 #include "Blueprint/UserWidget.h"
 #include "GameFramework/PlayerController.h"
+
+class ATestSLPlayerState;
+
 #include "TestSLGameMode.generated.h"
 
 /**
@@ -18,7 +21,6 @@ class TEST_SAVAGE_LEVEL_API ATestSLGameMode : public AGameModeBase
 	
 public:
 	void Respawn(AController* playerController);
-	void Quit();
 
 protected:
 	virtual void BeginPlay() override;
@@ -31,6 +33,10 @@ public:
 	float GetRemainingTime();
 
 private:
+
+	void LoadScore();
+	void SaveScore();
+
 	void EndGame();
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
@@ -45,6 +51,7 @@ private:
 	TSubclassOf<UUserWidget> EndWidgetClass;
 
 	APlayerController* PlayerController;
+	ATestSLPlayerState* PlayerState;
 
 	UPROPERTY(Category = UI, EditAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
 	TSubclassOf<UUserWidget> PauseWidgetClass;

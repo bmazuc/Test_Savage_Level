@@ -8,6 +8,7 @@
 #include "Camera/CameraComponent.h"
 #include <Runtime/Engine/Classes/Kismet/KismetMathLibrary.h>
 #include "TestSLGameMode.h"
+#include "TestSLPlayerState.h"
 
 // Sets default values
 APlayerCharacter::APlayerCharacter()
@@ -261,6 +262,14 @@ void APlayerCharacter::FinishDeathAnim()
 		Weapon->Destroy();
 
 	Destroy();
+
+	if (PlayerController)
+	{
+		ATestSLPlayerState* playerState = PlayerController->GetPlayerState<ATestSLPlayerState>();
+		if (playerState)
+			playerState->UpdateScore(DeathScoreModifier);
+	}
+
 	ATestSLGameMode* gm = Cast<ATestSLGameMode>(GetWorld()->GetAuthGameMode());
 	if (gm)
 		gm->Respawn(PlayerController);

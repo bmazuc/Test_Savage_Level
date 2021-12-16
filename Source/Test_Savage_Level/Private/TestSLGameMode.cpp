@@ -3,12 +3,18 @@
 
 #include "TestSLGameMode.h"
 #include <Runtime/Engine/Classes/Kismet/KismetSystemLibrary.h>
+#include <Runtime/Engine/Classes/Kismet/GameplayStatics.h>
+#include "ScoreSave.h"
+#include "TestSLPlayerState.h"
 
 void ATestSLGameMode::BeginPlay()
 {
 	TimerManager = &(GetWorld()->GetTimerManager());
 	TimerManager->SetTimer(GameTimerHandle, this, &ATestSLGameMode::EndGame, GameDuration, false);
 	PlayerController = GetWorld()->GetFirstPlayerController();
+
+	if (PlayerController)
+		PlayerState = PlayerController->GetPlayerState<ATestSLPlayerState>();
 
 	if (PauseWidgetClass)
 		PauseWidget = CreateWidget<UUserWidget>(GetWorld(), PauseWidgetClass);
@@ -19,6 +25,8 @@ void ATestSLGameMode::BeginPlay()
 		if (InGameWidget)
 			InGameWidget->AddToViewport();
 	}
+
+	LoadScore();
 }
 
 float ATestSLGameMode::GetRemainingTime()
@@ -102,9 +110,40 @@ void ATestSLGameMode::EndGame()
 	}
 
 	PlayerController->SetPause(true);
+	SaveScore();
 }
 
-void ATestSLGameMode::Quit()
+void ATestSLGameMode::LoadScore()
 {
-	//UKismetSystemLibrary::QuitGame(GetWorld(), nullptr, EQuitPreference::Quit);
+	if (UGameplayStatics::DoesSaveGameExist("highscore", 0))
+	{
+		UScoreSave* scoreSave = Cast<UScoreSave>(UGameplayStatics::LoadGameFromSlot("highscore", 0));
+		if (PlayerState)
+		{
+			PlayerState->SetHighScore(scoreSave->GetHighScore());
+		}
+	}
+	else
+	{
+		UScoreSave* scoreSave = Cast<UScoreSave>(UGameplayStatics::CreateSaveGameObject(UScoreSave::StaticClass()));
+		UGameplayStatics::SaveGameToSlot(scoreSave, "highscore", 0);
+	}
+}
+
+void ATestSLGameMode::SaveScore()
+{
+	if (UGameplayStatics::DoesSaveGameExist("highscore", 0))
+	{
+		UScoreSave* scoreSave = Cast<UScoreSave>(UGameplayStatics::LoadGameFromSlot("highscore", 0));
+
+		if (!PlayerState)
+			return;
+
+		if (PlayerState->UpdateHighScore())
+		{
+			scoreSave->SetHighScore(PlayerState->GetHighScore());
+
+			UGameplayStatics::SaveGameToSlot(scoreSave, "highscore", 0);
+		}
+	}
 }

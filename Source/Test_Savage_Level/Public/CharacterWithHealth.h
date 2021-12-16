@@ -30,7 +30,10 @@ public:
 	void TTakeDamage();
 	virtual void Die();
 
-private:
+protected:
+	UPROPERTY(Category = Score, EditAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
+	int DeathScoreModifier;
+
 	UPROPERTY(Category = Health, EditAnywhere, BlueprintReadWrite, meta = (ClampMin = "0", AllowPrivateAccess = "true"))
 	int MaxHealth = 100;
 	UPROPERTY(Category = Health, BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
