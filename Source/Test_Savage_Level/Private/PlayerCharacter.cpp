@@ -4,6 +4,7 @@
 #include "PlayerCharacter.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "GameFramework/SpringArmComponent.h"
+#include "Components/ChildActorComponent.h"
 #include "Camera/CameraComponent.h"
 #include <Runtime/Engine/Classes/Kismet/KismetMathLibrary.h>
 #include "TestSLGameMode.h"
@@ -45,9 +46,15 @@ void APlayerCharacter::BeginPlay()
 		RunSpeed = CharacterMovement->MaxWalkSpeed;
 
 	ShootTimer = 0.f;
-	WeaponData.ClipAmmo = WeaponData.MaxAmmo;
-	WeaponData.ClipCount = WeaponData.MaxClip;
-	WeaponData.CurrentSpread = 0.f;
+
+	Weapon = GetWorld()->SpawnActor<AWeapon>(WeaponClass);
+	FAttachmentTransformRules attachmentTransformRules(
+		EAttachmentRule::SnapToTarget,
+		EAttachmentRule::SnapToTarget,
+		EAttachmentRule::KeepWorld,
+		true
+		);
+	Weapon->AttachToComponent(GetMesh(), attachmentTransformRules, WeaponSocket);
 }
 
 // Called every frame
@@ -55,8 +62,8 @@ void APlayerCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
-	// Update spread
-	WeaponData.CurrentSpread = FMath::Max(WeaponData.MinSpread, WeaponData.CurrentSpread - WeaponData.WeaponSpreadRecoveryRate * DeltaTime);
+	if (Weapon)
+		Weapon->UpdateSpread(DeltaTime);
 
 	if (CurrentState == EPlayerCharacterState::Aim)
 	{
@@ -64,7 +71,7 @@ void APlayerCharacter::Tick(float DeltaTime)
 		if (IsShooting())
 		{
 			ShootTimer += DeltaTime;
-			if (ShootTimer > WeaponData.FireRate)
+			if (ShootTimer > Weapon->GetFireRate())
 			{
 				ShootTimer = 0.f;
 				FireShoot();
@@ -169,7 +176,8 @@ void APlayerCharacter::StartShoot()
 	if (CurrentState == EPlayerCharacterState::Aim)
 	{
 		bIsShooting = true;
-		ShootTimer = WeaponData.FireRate;
+		if (Weapon)
+			ShootTimer = Weapon->GetFireRate();
 	}
 }
 
@@ -183,32 +191,13 @@ void APlayerCharacter::EndShoot()
 
 void APlayerCharacter::FireShoot()
 {
-	if (WeaponData.ClipAmmo <= 0)
-	{ 
+	if (!Weapon)
+		return;
+
+	if (Weapon->IsClipEmpty())
 		EndShoot();
-	}
 	else
-	{
-		--WeaponData.ClipAmmo;
-
-		FRotator rotator = GetControlRotation();
-		rotator.Pitch = 0.f;
-		rotator.Roll = 0.f;
-		FVector lookDir = rotator.Vector();
-
-		if (WeaponData.CurrentSpread > 0.f)
-		{
-			float zAxis = lookDir.Z;
-			lookDir = UKismetMathLibrary::RandomUnitVectorInConeInRadians(lookDir, FMath::DegreesToRadians(WeaponData.CurrentSpread * .5f));
-			lookDir.Z = zAxis;
-		}
-		FVector location = GetActorLocation() + lookDir * WeaponData.gunOffset;
-		AProjectile* projectile = GetWorld()->SpawnActor<AProjectile>(WeaponData.ProjectileClass, location, rotator);
-		projectile->SetDamage(WeaponData.Damages);
-
-		//add spread
-		WeaponData.CurrentSpread = FMath::Min(WeaponData.MaxSpread, WeaponData.CurrentSpread + WeaponData.WeaponSpreadPerShot);
-	}
+		Weapon->Shoot();
 }
 
 void APlayerCharacter::AimToCursor(float DeltaTime)
@@ -227,7 +216,10 @@ void APlayerCharacter::AimToCursor(float DeltaTime)
 
 void APlayerCharacter::Reload()
 {
-	if (CurrentState == EPlayerCharacterState::Reload || WeaponData.ClipAmmo >= WeaponData.MaxAmmo || WeaponData.ClipCount <= 0
+	if (!Weapon)
+		return;
+
+	if (CurrentState == EPlayerCharacterState::Reload || Weapon->IsFullAmmo() || Weapon->IsClipEmpty()
 		|| CurrentState == EPlayerCharacterState::Dead)
 		return;
 
@@ -243,23 +235,12 @@ void APlayerCharacter::Reload()
 
 void APlayerCharacter::EndReload()
 {
-	if (CurrentState != EPlayerCharacterState::Reload)
+	if (CurrentState != EPlayerCharacterState::Reload || !Weapon)
 		return;
 
-	--WeaponData.ClipCount;
-	WeaponData.ClipAmmo = WeaponData.MaxAmmo;
+	Weapon->Reload();
 	CurrentState = EPlayerCharacterState::IdleRun;
 	CharacterMovement->MaxWalkSpeed = RunSpeed;
-}
-
-void APlayerCharacter::IncreasePlayerClip(int clip)
-{
-	WeaponData.ClipCount = FMath::Min(WeaponData.MaxClip, WeaponData.ClipCount + clip);
-}
-
-bool APlayerCharacter::IsFullClip()
-{
-	return (WeaponData.ClipCount >= WeaponData.MaxClip);
 }
 
 void APlayerCharacter::TempTakeDamage()

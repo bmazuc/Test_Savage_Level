@@ -9,13 +9,18 @@ void AClipBox::OnBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* 
 {
 	APlayerCharacter* Character = Cast<APlayerCharacter>(OtherActor);
 
-	if (Character)
+	if (!Character)
+		return;
+
+	AWeapon* weapon = Character->GetWeapon();
+
+	if (!weapon)
+		return;
+
+	if (!weapon->IsFullClip())
 	{
-		if (!Character->IsFullClip())
-		{
-			Character->IncreasePlayerClip(Clip);
-			if (Spawner)
-				Spawner->DestroyBox();
-		}
+		weapon->IncreaseClip(Clip);
+		if (Spawner)
+			Spawner->DestroyBox();
 	}
 }

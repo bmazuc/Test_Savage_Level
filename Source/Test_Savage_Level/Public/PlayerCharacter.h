@@ -5,7 +5,7 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
 #include "CharacterWithHealth.h"
-#include "Projectile.h"
+#include "Weapon.h"
 
 class UCharacterMovementComponent;
 class USpringArmComponent;
@@ -13,54 +13,6 @@ class UCameraComponent;
 class APlayerController;
 
 #include "PlayerCharacter.generated.h"
-
-USTRUCT(BlueprintType)
-struct FWeaponData
-{
-	GENERATED_BODY()
-
-public:
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	float gunOffset = 85.f;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-		float FireRate = 0.24f;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-		TSubclassOf<AProjectile> ProjectileClass;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-		int Damages = 10;
-
-// Clip and ammo datas
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (ClampMin = "0"))
-	int MaxAmmo = 50;
-	UPROPERTY(BlueprintReadWrite)
-	int ClipAmmo;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (ClampMin = "0"))
-	int MaxClip = 9;
-	UPROPERTY(BlueprintReadWrite)
-	int ClipCount;
-
-// SpreadData
-
-	UPROPERTY(BlueprintReadWrite, EditAnywhere)
-	float MinSpread = 2.f;
-
-	UPROPERTY(BlueprintReadWrite, EditAnywhere)
-	float MaxSpread = 30.f;
-
-	UPROPERTY(BlueprintReadWrite, EditAnywhere)
-	float WeaponSpreadPerShot = 4.f;
-
-	UPROPERTY(BlueprintReadWrite, EditAnywhere)
-	float WeaponSpreadRecoveryRate = 1.5f;
-
-	UPROPERTY(Transient, BlueprintReadOnly)
-	float CurrentSpread;
-};
 
 UENUM(BlueprintType)
 enum class EPlayerCharacterState : uint8
@@ -97,12 +49,10 @@ public:
 	void EndReload();
 	void FinishDeathAnim();
 
-	// Return false if clip is already maxed.
-	void IncreasePlayerClip(int clip);
-	bool IsFullClip();
-
 	void TempTakeDamage();
 	void Die() override;
+
+	AWeapon* GetWeapon() { return Weapon; }
 
 private:
 	void MoveForward(float Value);
@@ -138,7 +88,13 @@ private:
 	float ShootTimer;
 
 	UPROPERTY(Category = PlayerCharacter, EditAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
-	FWeaponData WeaponData;
+	TSubclassOf<AWeapon> WeaponClass;
+
+	UPROPERTY(Category = PlayerCharacter, EditAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
+	FName WeaponSocket;
+
+	UPROPERTY(Category = PlayerCharacter, BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
+	AWeapon* Weapon;
 
 	EPlayerCharacterState CurrentState = EPlayerCharacterState::IdleRun;
 	bool bIsShooting = false;
