@@ -107,10 +107,8 @@ void APlayerCharacter::MoveForward(float Value)
 	if (CurrentState == EPlayerCharacterState::Dead)
 		return;
 
-	FRotator rotator = GetControlRotation();
-	rotator.Pitch = 0.f;
-	rotator.Roll = 0.f;
-	AddMovementInput(Value * rotator.Vector());
+	// Use Forward Vector because we want to move independently of the rotation as it is a top-down shooter.
+	AddMovementInput(Value * FVector::ForwardVector);
 }
 
 void APlayerCharacter::MoveRight(float Value)
@@ -118,10 +116,8 @@ void APlayerCharacter::MoveRight(float Value)
 	if (CurrentState == EPlayerCharacterState::Dead)
 		return;
 
-	FRotator rotator = GetControlRotation();
-	rotator.Pitch = 0.f;
-	rotator.Roll = 0.f;
-	AddMovementInput(Value * rotator.RotateVector(FVector::RightVector));
+	// Use Right Vector because we want to move independently of the rotation as it is a top-down shooter.
+	AddMovementInput(Value * FVector::RightVector);
 }
 
 void APlayerCharacter::StartAim()
@@ -160,7 +156,7 @@ void APlayerCharacter::EndAim()
 
 	if (PlayerController)
 		PlayerController->bShowMouseCursor = false;
-
+	PlayerController->SetControlRotation(FRotator());
 	bUseControllerRotationYaw = false;
 }
 
