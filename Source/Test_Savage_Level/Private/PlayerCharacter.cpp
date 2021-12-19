@@ -58,6 +58,10 @@ void APlayerCharacter::BeginPlay()
 		true
 		);
 	Weapon->AttachToComponent(GetMesh(), attachmentTransformRules, WeaponSocket);
+
+	FRotator newRotation = Weapon->GetActorRotation();
+	newRotation.Yaw = PlayerController->GetControlRotation().Yaw;
+	Weapon->SetActorRotation(newRotation);
 }
 
 // Called every frame
@@ -196,7 +200,7 @@ void APlayerCharacter::FireShoot()
 	if (Weapon->IsClipEmpty())
 		EndShoot();
 	else
-		Weapon->Shoot();
+		Weapon->Shoot(GetActorForwardVector());
 }
 
 void APlayerCharacter::AimToCursor(float DeltaTime)
@@ -210,6 +214,14 @@ void APlayerCharacter::AimToCursor(float DeltaTime)
 		FRotator lookAt = UKismetMathLibrary::FindLookAtRotation(GetActorLocation(), hitResult.Location);
 		FRotator newControlRotation = UKismetMathLibrary::RInterpTo(GetActorRotation(), lookAt, DeltaTime, 33);
 		PlayerController->SetControlRotation(newControlRotation);
+
+		if (Weapon)
+		{
+			//lookAt = UKismetMathLibrary::FindLookAtRotation(Weapon->GetActorLocation(), hitResult.Location);
+			FRotator newRotation = Weapon->GetActorRotation();
+			newRotation.Yaw = PlayerController->GetControlRotation().Yaw;
+			Weapon->SetActorRotation(newRotation);
+		}
 	}
 }
 

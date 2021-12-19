@@ -27,7 +27,7 @@ protected:
 	virtual void BeginPlay() override;
 
 public:
-	void Shoot();
+	void Shoot(FVector forward);
 	void UpdateSpread(float DeltaTime);
 	bool IsFullClip();
 	bool IsClipEmpty();
@@ -58,6 +58,9 @@ private:
 	int Damages = 10;
 
 	// Clip and ammo datas
+
+	UPROPERTY(Category = "Weapon|Ammunitions", EditAnywhere, BlueprintReadWrite, meta = (ClampMin = "0", AllowPrivateAccess = "true"))
+	bool bHasUnlimitedAmmo = false;
 
 	UPROPERTY(Category = "Weapon|Ammunitions", EditAnywhere, BlueprintReadWrite, meta = (ClampMin = "0", AllowPrivateAccess = "true"))
 		int MaxAmmo = 50;

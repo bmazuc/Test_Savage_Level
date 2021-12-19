@@ -6,6 +6,8 @@
 
 void AMainMenuGameMode::BeginPlay()
 {
+	Super::BeginPlay();
+
 	APlayerController* PlayerController = GetWorld()->GetFirstPlayerController();
 
 	if (PlayerController)

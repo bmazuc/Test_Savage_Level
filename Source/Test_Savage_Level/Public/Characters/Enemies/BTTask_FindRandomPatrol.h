@@ -26,7 +26,7 @@ class TEST_SAVAGE_LEVEL_API UBTTask_FindRandomPatrol : public UBTTaskNode
 	float PatrolSpeed = 125.f;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
-		float PatrolRadius = 1000.f;
+	float PatrolRadius = 1000.f;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
 	FBlackboardKeySelector BlackboardKey;

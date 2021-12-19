@@ -4,6 +4,9 @@
 
 #include "CoreMinimal.h"
 #include "AIController.h"
+#include "Perception/AIPerceptionTypes.h"
+#include "Perception/AIPerceptionComponent.h"
+#include "Perception/AISenseConfig_Sight.h"
 #include "EnemyAIController.generated.h"
 
 /**
@@ -15,7 +18,15 @@ class TEST_SAVAGE_LEVEL_API AEnemyAIController : public AAIController
 	GENERATED_BODY()
 
 public:
+	AEnemyAIController();
+
+protected:
 	virtual void BeginPlay() override;
+
+private:
+	UFUNCTION()
+	void UpdateTargetPerception(AActor* actor, FAIStimulus stimulus);
+	void LoseTrackOfPlayer();
 
 private:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
@@ -24,4 +35,19 @@ private:
 	UBehaviorTree* BehaviorTree;
 
 	UBlackboardComponent* BlackboardComponent;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
+	// Determine how long before the AI gives up chasing the Player.
+	float ChaseTimer = 5.f;
+	FTimerHandle EnemyTimerHandle;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
+	FName HasLineOfSight = "HasLineOfSight";
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
+	FName PlayerActor = "PlayerActor";
+	FTimerManager* TimerManager;
+
+	UPROPERTY(Category = EnemyAIController, VisibleAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
+	UAIPerceptionComponent* AIPerceptionComponent;
+
+	UAISenseConfig_Sight* sightConfig;
 };

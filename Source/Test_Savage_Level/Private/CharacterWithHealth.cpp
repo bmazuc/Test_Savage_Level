@@ -18,6 +18,11 @@ void ACharacterWithHealth::BeginPlay()
 	Super::BeginPlay();
 	
 	CurrentHealth = MaxHealth;
+
+	if (GEngine)
+		GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, TEXT("Some debug message!"));
+
+	StartInvincibility();
 }
 
 // Called every frame
@@ -39,6 +44,9 @@ bool ACharacterWithHealth::IsFullHealth()
 
 float ACharacterWithHealth::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, class AController* EventInstigator, AActor* DamageCauser)
 {
+	if (bInvincible)
+		return 0.f;
+
 	CurrentHealth -= DamageAmount;
 
 	if (CurrentHealth <= 0)
@@ -67,4 +75,16 @@ void ACharacterWithHealth::Die()
 	}
 
 	Destroy();
+}
+
+void ACharacterWithHealth::StartInvincibility()
+{
+	bInvincible = true;
+
+	GetWorld()->GetTimerManager().SetTimer(InvincibilityTimerHandle, this, &ACharacterWithHealth::StopInvincibility, InvincibilityTime, false);
+}
+
+void ACharacterWithHealth::StopInvincibility()
+{
+	bInvincible = false;
 }

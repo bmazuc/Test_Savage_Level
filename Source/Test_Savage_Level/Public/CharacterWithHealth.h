@@ -31,8 +31,19 @@ public:
 	virtual void Die();
 
 protected:
+	void StartInvincibility();
+
+private:
+	void StopInvincibility();
+
+protected:
 	UPROPERTY(Category = Score, EditAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
 	int DeathScoreModifier;
+
+	UPROPERTY(Category = Invincibility, BlueprintReadWrite, EditAnywhere, meta = (ClampMin = "0.0", AllowPrivateAccess = "true"))
+	float InvincibilityTime = 5.f;
+	bool bInvincible;
+	FTimerHandle InvincibilityTimerHandle;
 
 	UPROPERTY(Category = Health, EditAnywhere, BlueprintReadWrite, meta = (ClampMin = "0", AllowPrivateAccess = "true"))
 	int MaxHealth = 100;

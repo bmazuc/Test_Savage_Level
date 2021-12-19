@@ -24,7 +24,7 @@ enum class EPlayerCharacterState : uint8
 };
 
 UCLASS()
-class APlayerCharacter : public ACharacterWithHealth
+class TEST_SAVAGE_LEVEL_API APlayerCharacter : public ACharacterWithHealth
 {
 	GENERATED_BODY()
 
@@ -87,13 +87,13 @@ private:
 
 	float ShootTimer;
 
-	UPROPERTY(Category = PlayerCharacter, EditAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
+	UPROPERTY(Category = "PlayerCharacter|Weapon", EditAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
 	TSubclassOf<AWeapon> WeaponClass;
 
-	UPROPERTY(Category = PlayerCharacter, EditAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
+	UPROPERTY(Category = "PlayerCharacter|Weapon", EditAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
 	FName WeaponSocket;
 
-	UPROPERTY(Category = PlayerCharacter, BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
+	UPROPERTY(Category = "PlayerCharacter|Weapon", BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
 	AWeapon* Weapon;
 
 	EPlayerCharacterState CurrentState = EPlayerCharacterState::IdleRun;

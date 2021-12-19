@@ -59,12 +59,12 @@ void AWeapon::Reload()
 	ClipAmmo = MaxAmmo;
 }
 
-void AWeapon::Shoot()
+void AWeapon::Shoot(FVector forward)
 {
+	if (!bHasUnlimitedAmmo)
+		--ClipAmmo;
 
-	--ClipAmmo;
-
-	FVector lookDir = GetActorForwardVector() * -1.f;
+	FVector lookDir = GetActorForwardVector();
 
 	if (CurrentSpread > 0.f)
 	{

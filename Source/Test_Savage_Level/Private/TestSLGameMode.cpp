@@ -9,6 +9,8 @@
 
 void ATestSLGameMode::BeginPlay()
 {
+	Super::BeginPlay();
+
 	TimerManager = &(GetWorld()->GetTimerManager());
 	TimerManager->SetTimer(GameTimerHandle, this, &ATestSLGameMode::EndGame, GameDuration, false);
 	PlayerController = GetWorld()->GetFirstPlayerController();
