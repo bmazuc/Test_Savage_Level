@@ -27,8 +27,9 @@ public:
 	bool IsFullHealth();
 
 	virtual float TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser) override;
-	void TTakeDamage();
+	bool IsDead();
 	virtual void Die();
+	virtual void FinishDeathAnim();
 
 protected:
 	void StartInvincibility();
@@ -49,4 +50,6 @@ protected:
 	int MaxHealth = 100;
 	UPROPERTY(Category = Health, BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
 	int CurrentHealth;
+
+	bool bIsDead = false;
 };

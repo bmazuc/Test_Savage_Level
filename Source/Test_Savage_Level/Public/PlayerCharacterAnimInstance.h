@@ -45,4 +45,7 @@ private:
 
 	UPROPERTY(Category = "Resources|Montages", EditAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
 	UAnimMontage* ReloadMontage;
+
+	UPROPERTY(Category = "Resources|Montages", EditAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
+	UAnimMontage* FireMontage;
 };

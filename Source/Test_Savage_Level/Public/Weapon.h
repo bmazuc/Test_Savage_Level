@@ -27,7 +27,7 @@ protected:
 	virtual void BeginPlay() override;
 
 public:
-	void Shoot(FVector forward);
+	void Shoot();
 	void UpdateSpread(float DeltaTime);
 	bool IsFullClip();
 	bool IsClipEmpty();

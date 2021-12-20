@@ -11,6 +11,7 @@ class UCharacterMovementComponent;
 class USpringArmComponent;
 class UCameraComponent;
 class APlayerController;
+class UStaticMeshComponent;
 
 #include "PlayerCharacter.generated.h"
 
@@ -47,9 +48,8 @@ public:
 	EPlayerCharacterState GetCurrentState();
 
 	void EndReload();
-	void FinishDeathAnim();
+	virtual void FinishDeathAnim() override;
 
-	void TempTakeDamage();
 	void Die() override;
 
 	AWeapon* GetWeapon() { return Weapon; }
@@ -68,6 +68,9 @@ private:
 
 	void AimToCursor(float DeltaTime);
 
+	void SetAimX(float Value);
+	void SetAimY(float Value);
+
 	void Reload();
 
 private:
@@ -78,6 +81,9 @@ private:
 
 	UPROPERTY(Category = PlayerCharacter, VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
 	UCameraComponent* Camera;
+
+	UPROPERTY(Category = PlayerCharacter, VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
+	UStaticMeshComponent* CrosshairMesh;
 
 	UPROPERTY(Category = PlayerCharacter, EditAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
 	float ReloadWalkSpeed = 400.f;

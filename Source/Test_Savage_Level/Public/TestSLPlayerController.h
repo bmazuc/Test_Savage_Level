@@ -13,7 +13,11 @@ UCLASS()
 class TEST_SAVAGE_LEVEL_API ATestSLPlayerController : public APlayerController
 {
 	GENERATED_BODY()
-	
+
+protected:
+	// Called when the game starts or when spawned
+	virtual void BeginPlay() override;
+
 public:
 	// Called to bind functionality to input
 	virtual void SetupInputComponent() override;

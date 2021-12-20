@@ -3,6 +3,7 @@
 
 #include "Characters/Enemies/EnemyAIController.h"
 //#include "Perception/AIPerceptionComponent.h"
+#include "PlayerCharacter.h"
 #include "BehaviorTree/BlackboardComponent.h"
 
 AEnemyAIController::AEnemyAIController()
@@ -29,8 +30,29 @@ void AEnemyAIController::BeginPlay()
 
 void AEnemyAIController::UpdateTargetPerception(AActor* actor, FAIStimulus stimulus)
 {
+	if (actor->ActorHasTag("Enemy"))
+		return;
+
+	if (PlayerCharacter && PlayerCharacter->GetCurrentState() == EPlayerCharacterState::Dead)
+	{
+		if (EnemyTimerHandle.IsValid())
+			TimerManager->ClearTimer(EnemyTimerHandle);
+
+		LoseTrackOfPlayer();
+		PlayerCharacter = nullptr;
+		return;
+	}
+
 	if (actor->ActorHasTag("Player") && stimulus.WasSuccessfullySensed())
 	{
+		PlayerCharacter = Cast<APlayerCharacter>(actor);
+
+		if (PlayerCharacter && PlayerCharacter->GetCurrentState() == EPlayerCharacterState::Dead)
+		{
+			PlayerCharacter = nullptr;
+			return;
+		}
+
 		if (EnemyTimerHandle.IsValid())
 			TimerManager->ClearTimer(EnemyTimerHandle);
 

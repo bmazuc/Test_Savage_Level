@@ -7,6 +7,9 @@
 #include "Perception/AIPerceptionTypes.h"
 #include "Perception/AIPerceptionComponent.h"
 #include "Perception/AISenseConfig_Sight.h"
+
+class APlayerCharacter;
+
 #include "EnemyAIController.generated.h"
 
 /**
@@ -50,4 +53,6 @@ private:
 	UAIPerceptionComponent* AIPerceptionComponent;
 
 	UAISenseConfig_Sight* sightConfig;
+
+	APlayerCharacter* PlayerCharacter;
 };

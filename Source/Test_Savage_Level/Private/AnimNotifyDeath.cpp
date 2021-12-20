@@ -2,12 +2,12 @@
 
 
 #include "AnimNotifyDeath.h"
-#include "PlayerCharacter.h"
+#include "CharacterWithHealth.h"
 
 void UAnimNotifyDeath::Notify(USkeletalMeshComponent* MeshComp, UAnimSequenceBase* Animation)
 {
-	APlayerCharacter* PlayerCharacter = Cast<APlayerCharacter>(MeshComp->GetOwner());
+	ACharacterWithHealth* CharacterWithHealth = Cast<ACharacterWithHealth>(MeshComp->GetOwner());
 
-	if (PlayerCharacter)
-		PlayerCharacter->FinishDeathAnim();
+	if (CharacterWithHealth)
+		CharacterWithHealth->FinishDeathAnim();
 }

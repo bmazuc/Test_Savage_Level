@@ -9,6 +9,7 @@
 #include <Runtime/Engine/Classes/Kismet/KismetMathLibrary.h>
 #include "TestSLGameMode.h"
 #include "TestSLPlayerState.h"
+#include "Components/StaticMeshComponent.h"
 
 // Sets default values
 APlayerCharacter::APlayerCharacter()
@@ -36,6 +37,10 @@ APlayerCharacter::APlayerCharacter()
 	// Create a camera and attach to our spring arm
 	Camera = CreateDefaultSubobject<UCameraComponent>(TEXT("Camera"));
 	Camera->SetupAttachment(SpringArm);
+
+	CrosshairMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Crosshair"));
+	CrosshairMesh->SetupAttachment(RootComponent);
+	CrosshairMesh->SetVisibility(false);
 }
 
 // Called when the game starts or when spawned
@@ -102,8 +107,6 @@ void APlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCom
 	InputComponent->BindAction("Shoot", EInputEvent::IE_Released, this, &APlayerCharacter::EndShoot);
 
 	InputComponent->BindAction("Reload", EInputEvent::IE_Pressed, this, &APlayerCharacter::Reload);
-
-	InputComponent->BindAction("TempTakeDamage", EInputEvent::IE_Pressed, this, &APlayerCharacter::TempTakeDamage);
 }
 
 void APlayerCharacter::MoveForward(float Value)
@@ -137,8 +140,7 @@ void APlayerCharacter::StartAim()
 		CharacterMovement->bOrientRotationToMovement = false;
 	}
 
-	if (PlayerController)
-		PlayerController->bShowMouseCursor = true;
+	CrosshairMesh->SetVisibility(true);
 
 	bUseControllerRotationYaw = true;
 }
@@ -158,8 +160,8 @@ void APlayerCharacter::EndAim()
 		CharacterMovement->bOrientRotationToMovement = true;
 	}
 
-	if (PlayerController)
-		PlayerController->bShowMouseCursor = false;
+	CrosshairMesh->SetVisibility(false);
+
 	PlayerController->SetControlRotation(FRotator());
 	bUseControllerRotationYaw = false;
 }
@@ -200,7 +202,7 @@ void APlayerCharacter::FireShoot()
 	if (Weapon->IsClipEmpty())
 		EndShoot();
 	else
-		Weapon->Shoot(GetActorForwardVector());
+		Weapon->Shoot();
 }
 
 void APlayerCharacter::AimToCursor(float DeltaTime)
@@ -217,11 +219,11 @@ void APlayerCharacter::AimToCursor(float DeltaTime)
 
 		if (Weapon)
 		{
-			//lookAt = UKismetMathLibrary::FindLookAtRotation(Weapon->GetActorLocation(), hitResult.Location);
 			FRotator newRotation = Weapon->GetActorRotation();
 			newRotation.Yaw = PlayerController->GetControlRotation().Yaw;
 			Weapon->SetActorRotation(newRotation);
 		}
+		CrosshairMesh->SetWorldLocation(hitResult.Location + hitResult.ImpactNormal * 10.f);
 	}
 }
 
@@ -254,13 +256,10 @@ void APlayerCharacter::EndReload()
 	CharacterMovement->MaxWalkSpeed = RunSpeed;
 }
 
-void APlayerCharacter::TempTakeDamage()
-{
-	TTakeDamage();
-}
-
 void APlayerCharacter::Die()
 {
+	Super::Die();
+
 	CurrentState = EPlayerCharacterState::Dead;
 }
 
@@ -270,13 +269,6 @@ void APlayerCharacter::FinishDeathAnim()
 		Weapon->Destroy();
 
 	Destroy();
-
-	if (PlayerController)
-	{
-		ATestSLPlayerState* playerState = PlayerController->GetPlayerState<ATestSLPlayerState>();
-		if (playerState)
-			playerState->UpdateScore(DeathScoreModifier);
-	}
 
 	ATestSLGameMode* gm = Cast<ATestSLGameMode>(GetWorld()->GetAuthGameMode());
 	if (gm)

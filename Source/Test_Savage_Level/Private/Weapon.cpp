@@ -59,7 +59,7 @@ void AWeapon::Reload()
 	ClipAmmo = MaxAmmo;
 }
 
-void AWeapon::Shoot(FVector forward)
+void AWeapon::Shoot()
 {
 	if (!bHasUnlimitedAmmo)
 		--ClipAmmo;

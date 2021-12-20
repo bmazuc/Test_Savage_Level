@@ -7,6 +7,7 @@
 #include "Weapon.h"
 
 class UCharacterMovementComponent;
+class AEnemyDirector;
 
 #include "Enemy.generated.h"
 
@@ -31,6 +32,12 @@ public:
 	virtual void Tick(float DeltaTime) override;
 	void UpdateWalkSpeed(float WalkSpeed);
 	void FireShoot();
+	bool ConsumeShootTrigger();
+
+	void SetDirector(AEnemyDirector* NewDirector);
+
+	virtual void Die() override;
+	virtual void FinishDeathAnim() override;
 
 private:
 	void Aim();
@@ -48,4 +55,8 @@ private:
 		AWeapon* Weapon;
 
 	float ShootTimer = 0.f;
+
+	bool bHasShoot;
+
+	AEnemyDirector* Director;
 };

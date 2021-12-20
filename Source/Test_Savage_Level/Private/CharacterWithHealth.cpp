@@ -19,9 +19,6 @@ void ACharacterWithHealth::BeginPlay()
 	
 	CurrentHealth = MaxHealth;
 
-	if (GEngine)
-		GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, TEXT("Some debug message!"));
-
 	StartInvincibility();
 }
 
@@ -44,7 +41,7 @@ bool ACharacterWithHealth::IsFullHealth()
 
 float ACharacterWithHealth::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, class AController* EventInstigator, AActor* DamageCauser)
 {
-	if (bInvincible)
+	if (bInvincible || bIsDead)
 		return 0.f;
 
 	CurrentHealth -= DamageAmount;
@@ -55,16 +52,15 @@ float ACharacterWithHealth::TakeDamage(float DamageAmount, FDamageEvent const& D
 	return DamageAmount;
 }
 
-void ACharacterWithHealth::TTakeDamage()
+bool ACharacterWithHealth::IsDead()
 {
-	CurrentHealth -= 10;
-
-	if (CurrentHealth <= 0)
-		Die();
+	return bIsDead;
 }
 
 void ACharacterWithHealth::Die()
 {
+	bIsDead = true;
+
 	APlayerController* PlayerController = GetWorld()->GetFirstPlayerController();
 
 	if (PlayerController)
@@ -73,8 +69,6 @@ void ACharacterWithHealth::Die()
 		if (playerState)
 			playerState->UpdateScore(DeathScoreModifier);
 	}
-
-	Destroy();
 }
 
 void ACharacterWithHealth::StartInvincibility()
@@ -87,4 +81,9 @@ void ACharacterWithHealth::StartInvincibility()
 void ACharacterWithHealth::StopInvincibility()
 {
 	bInvincible = false;
+}
+
+void ACharacterWithHealth::FinishDeathAnim()
+{
+
 }

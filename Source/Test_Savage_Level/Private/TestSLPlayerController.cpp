@@ -4,11 +4,18 @@
 #include "TestSLPlayerController.h"
 #include "TestSLGameMode.h"
 #include "Kismet/GameplayStatics.h"
+#include "GameFramework/PlayerInput.h"
+
+void ATestSLPlayerController::BeginPlay()
+{
+	Super::BeginPlay();
+
+	SetInputMode(FInputModeGameOnly());
+}
 
 void ATestSLPlayerController::SetupInputComponent()
 {
 	Super::SetupInputComponent();
-
 	InputComponent->BindAction("Pause", EInputEvent::IE_Pressed, this, &ATestSLPlayerController::PauseGame);
 }
 

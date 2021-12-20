@@ -24,4 +24,5 @@ void UPlayerCharacterAnimInstance::NativeUpdateAnimation(float DeltaSeconds)
 	PlayerCharacterState = PlayerCharacter->GetCurrentState();
 
 	UAnimationsUtilities::UpdateMontagePlayState(this, ReloadMontage, PlayerCharacterState == EPlayerCharacterState::Reload);
+	UAnimationsUtilities::UpdateMontagePlayState(this, FireMontage, PlayerCharacter->IsShooting());
 }

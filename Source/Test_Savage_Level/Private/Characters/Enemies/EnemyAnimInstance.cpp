@@ -6,6 +6,8 @@
 void UEnemyAnimInstance::NativeInitializeAnimation()
 {
 	EnemyCharacter = Cast<AEnemy>(TryGetPawnOwner());
+	bIsDead = false;
+	DeathIdx = FMath::RandRange(0, DeathMaxRange);
 }
 
 void UEnemyAnimInstance::NativeUpdateAnimation(float DeltaSeconds)
@@ -14,6 +16,10 @@ void UEnemyAnimInstance::NativeUpdateAnimation(float DeltaSeconds)
 		return;
 
 	FVector velocity = EnemyCharacter->GetVelocity();
-
 	Speed = velocity.Size();
+
+	bIsDead = EnemyCharacter->IsDead();
+
+	if (EnemyCharacter->ConsumeShootTrigger())
+		Montage_Play(FireMontage);
 }

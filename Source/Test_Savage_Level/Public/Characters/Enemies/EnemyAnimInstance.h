@@ -22,6 +22,14 @@ public:
 private:
 	UPROPERTY(Category = PlayerCharacterAnimInstance, Transient, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
 	float Speed;
-
+	UPROPERTY(Category = PlayerCharacterAnimInstance, Transient, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
+	bool bIsDead;
+	UPROPERTY(Category = PlayerCharacterAnimInstance, Transient, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
+	int DeathIdx;
+	UPROPERTY(Category = PlayerCharacterAnimInstance, EditAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
+	int DeathMaxRange = 2;
 	AEnemy* EnemyCharacter;
+
+	UPROPERTY(Category = "Resources|Montages", EditAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
+	UAnimMontage* FireMontage;
 };
