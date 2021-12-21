@@ -2,18 +2,18 @@
 
 
 #include "ItemBox/HealthBox.h"
-#include "PlayerCharacter.h"
+#include "Character/PlayerCharacter.h"
 #include "ItemBox/ItemBoxSpawner.h"
 
 void AHealthBox::OnBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
-	APlayerCharacter* Character = Cast<APlayerCharacter>(OtherActor);
+	APlayerCharacter* character = Cast<APlayerCharacter>(OtherActor);
 
-	if (Character)
+	if (character)
 	{
-		if (!Character->IsFullHealth())
+		if (!character->IsFullHealth())
 		{
-			Character->Heal(Health);
+			character->Heal(Health);
 			if (Spawner)
 				Spawner->DestroyBox();
 		}

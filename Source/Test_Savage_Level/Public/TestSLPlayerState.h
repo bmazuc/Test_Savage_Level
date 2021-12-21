@@ -15,7 +15,7 @@ class TEST_SAVAGE_LEVEL_API ATestSLPlayerState : public APlayerState
 	GENERATED_BODY()
 
 public:
-	void UpdateScore(int points);
+	void UpdateScore(int Points);
 	// Return true if highscore have changed.
 	bool UpdateHighScore();
 

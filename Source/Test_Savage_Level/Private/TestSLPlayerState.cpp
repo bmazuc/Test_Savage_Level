@@ -3,9 +3,9 @@
 
 #include "TestSLPlayerState.h"
 
-void ATestSLPlayerState::UpdateScore(int points)
+void ATestSLPlayerState::UpdateScore(int Points)
 {
-	SetScore(GetScore() + points);
+	SetScore(GetScore() + Points);
 }
 
 bool ATestSLPlayerState::UpdateHighScore()

@@ -8,10 +8,10 @@ void AMainMenuGameMode::BeginPlay()
 {
 	Super::BeginPlay();
 
-	APlayerController* PlayerController = GetWorld()->GetFirstPlayerController();
+	APlayerController* playerController = GetWorld()->GetFirstPlayerController();
 
-	if (PlayerController)
-		PlayerController->bShowMouseCursor = true;
+	if (playerController)
+		playerController->bShowMouseCursor = true;
 
 	if (!WidgetClass)
 		return;
@@ -20,12 +20,12 @@ void AMainMenuGameMode::BeginPlay()
 
 	if (widget)
 	{
-		if (widget->bIsFocusable && PlayerController)
+		if (widget->bIsFocusable && playerController)
 		{
-			FInputModeUIOnly InputModeData;
-			InputModeData.SetWidgetToFocus(widget->TakeWidget());
-			InputModeData.SetLockMouseToViewportBehavior(EMouseLockMode::DoNotLock);
-			PlayerController->SetInputMode(InputModeData);
+			FInputModeUIOnly inputModeData;
+			inputModeData.SetWidgetToFocus(widget->TakeWidget());
+			inputModeData.SetLockMouseToViewportBehavior(EMouseLockMode::DoNotLock);
+			playerController->SetInputMode(inputModeData);
 		}
 		widget->AddToViewport();
 	}

@@ -26,7 +26,7 @@ public:
 private:
 	void SpawnBox();
 
-	AItemBox* box;
+	AItemBox* Box;
 
 	FTimerHandle SpawnTimerHandle;
 

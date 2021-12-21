@@ -2,17 +2,17 @@
 
 
 #include "ItemBox/ClipBox.h"
-#include "PlayerCharacter.h"
+#include "Character/PlayerCharacter.h"
 #include "ItemBox/ItemBoxSpawner.h"
 
 void AClipBox::OnBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
-	APlayerCharacter* Character = Cast<APlayerCharacter>(OtherActor);
+	APlayerCharacter* character = Cast<APlayerCharacter>(OtherActor);
 
-	if (!Character)
+	if (!character)
 		return;
 
-	AWeapon* weapon = Character->GetWeapon();
+	AWeapon* weapon = character->GetWeapon();
 
 	if (!weapon)
 		return;

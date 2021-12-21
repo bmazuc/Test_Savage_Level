@@ -20,7 +20,7 @@ class TEST_SAVAGE_LEVEL_API ATestSLGameMode : public AGameModeBase
 	GENERATED_BODY()
 	
 public:
-	void Respawn(AController* playerController);
+	void Respawn(AController* Controller);
 
 protected:
 	virtual void BeginPlay() override;

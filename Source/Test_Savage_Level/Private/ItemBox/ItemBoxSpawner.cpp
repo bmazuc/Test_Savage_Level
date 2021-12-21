@@ -8,7 +8,7 @@ AItemBoxSpawner::AItemBoxSpawner()
 {
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
-	box = nullptr;
+	Box = nullptr;
 }
 
 // Called when the game starts or when spawned
@@ -20,23 +20,23 @@ void AItemBoxSpawner::BeginPlay()
 
 void AItemBoxSpawner::DestroyBox()
 {
-	if (!box)
+	if (!Box)
 		return;
 
-	box->Destroy();
-	box = nullptr;
+	Box->Destroy();
+	Box = nullptr;
 
 	GetWorld()->GetTimerManager().SetTimer(SpawnTimerHandle, this, &AItemBoxSpawner::SpawnBox, SpawnTimer, false);
 }
 
 void AItemBoxSpawner::SpawnBox()
 {
-	if (box)
+	if (Box)
 		return;
 
-	box = GetWorld()->SpawnActor<AItemBox>(ItemBoxClass, GetActorLocation(), GetActorRotation());
+	Box = GetWorld()->SpawnActor<AItemBox>(ItemBoxClass, GetActorLocation(), GetActorRotation());
 
-	if (box)
-		box->SetSpawner(this);
+	if (Box)
+		Box->SetSpawner(this);
 }
 

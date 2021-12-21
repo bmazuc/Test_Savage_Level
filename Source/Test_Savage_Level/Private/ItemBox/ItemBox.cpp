@@ -12,16 +12,16 @@ AItemBox::AItemBox()
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
-	collider = CreateDefaultSubobject<UBoxComponent>(TEXT("Collider"));
-	RootComponent = collider;
+	Collider = CreateDefaultSubobject<UBoxComponent>(TEXT("Collider"));
+	RootComponent = Collider;
 	BoxMesh = CreateDefaultSubobject<UStaticMeshComponent >(TEXT("BoxMesh"));
 	BoxMesh->SetupAttachment(RootComponent);
 
-	if (!collider->OnComponentBeginOverlap.IsAlreadyBound(this, &AItemBox::OnBeginOverlap))
-		collider->OnComponentBeginOverlap.AddDynamic(this, &AItemBox::OnBeginOverlap);
+	if (!Collider->OnComponentBeginOverlap.IsAlreadyBound(this, &AItemBox::OnBeginOverlap))
+		Collider->OnComponentBeginOverlap.AddDynamic(this, &AItemBox::OnBeginOverlap);
 }
 
-void AItemBox::SetSpawner(AItemBoxSpawner* newSpawner)
+void AItemBox::SetSpawner(AItemBoxSpawner* NewSpawner)
 {
-	Spawner = newSpawner;
+	Spawner = NewSpawner;
 }

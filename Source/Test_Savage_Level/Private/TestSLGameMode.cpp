@@ -36,17 +36,17 @@ float ATestSLGameMode::GetRemainingTime()
 	return TimerManager ? TimerManager->GetTimerRemaining(GameTimerHandle) : 0.f;
 }
 
-void ATestSLGameMode::Respawn(AController* playerController)
+void ATestSLGameMode::Respawn(AController* Controller)
 {
-	if (!playerController)
+	if (!Controller)
 		return;
 
-	AActor* start = FindPlayerStart(playerController);
+	AActor* start = FindPlayerStart(Controller);
 
 	if (!start)
 		return;
 
-	RestartPlayerAtPlayerStart(playerController, start);
+	RestartPlayerAtPlayerStart(Controller, start);
 }
 
 void ATestSLGameMode::PauseGame(bool bPause)
@@ -58,10 +58,10 @@ void ATestSLGameMode::PauseGame(bool bPause)
 	{
 		if (PauseWidget->bIsFocusable)
 		{
-			FInputModeUIOnly InputModeData;
-			InputModeData.SetWidgetToFocus(PauseWidget->TakeWidget());
-			InputModeData.SetLockMouseToViewportBehavior(EMouseLockMode::DoNotLock);
-			PlayerController->SetInputMode(InputModeData);
+			FInputModeUIOnly inputModeData;
+			inputModeData.SetWidgetToFocus(PauseWidget->TakeWidget());
+			inputModeData.SetLockMouseToViewportBehavior(EMouseLockMode::DoNotLock);
+			PlayerController->SetInputMode(inputModeData);
 		}
 	}
 	else
@@ -97,18 +97,18 @@ void ATestSLGameMode::EndGame()
 
 	if (EndWidgetClass)
 	{
-		UUserWidget* EndWidget = CreateWidget<UUserWidget>(GetWorld(), EndWidgetClass);
+		UUserWidget* endWidget = CreateWidget<UUserWidget>(GetWorld(), EndWidgetClass);
 
-		if (EndWidget->bIsFocusable)
+		if (endWidget->bIsFocusable)
 		{
-			FInputModeUIOnly InputModeData;
-			InputModeData.SetWidgetToFocus(EndWidget->TakeWidget());
-			InputModeData.SetLockMouseToViewportBehavior(EMouseLockMode::DoNotLock);
-			PlayerController->SetInputMode(InputModeData);
+			FInputModeUIOnly inputModeData;
+			inputModeData.SetWidgetToFocus(endWidget->TakeWidget());
+			inputModeData.SetLockMouseToViewportBehavior(EMouseLockMode::DoNotLock);
+			PlayerController->SetInputMode(inputModeData);
 		}
 
 		InGameWidget->RemoveFromViewport();
-		EndWidget->AddToViewport();
+		endWidget->AddToViewport();
 	}
 
 	PlayerController->SetPause(true);
