@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
 #include "Character/Enemy.h"
+#include "AI/EnemySpawnPoint.h"
 #include "EnemyDirector.generated.h"
 
 UCLASS()
@@ -37,7 +38,7 @@ private:
 	TSubclassOf<AEnemy> EnemyClass;
 
 	UPROPERTY(Category = EnemyDirector, EditAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
-	TArray<AActor*> SpawnPoints;
+	TArray<AEnemySpawnPoint*> SpawnPoints;
 
 	UPROPERTY(Category = EnemyDirectorEditAnywhere, BlueprintReadWrite, meta = (ClampMin = 0.1f, AllowPrivateAccess = "true"))
 	float SecondPerCompletion = 5.f;

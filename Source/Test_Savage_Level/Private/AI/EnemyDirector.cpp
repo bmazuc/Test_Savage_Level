@@ -40,14 +40,14 @@ void AEnemyDirector::SpawnEnemy()
 
 	float rand = FMath::FRandRange(0, SpawnPoints.Num() - 1);
 
-	AActor* selectedSpawnPoint = SpawnPoints[rand];
+	AEnemySpawnPoint* selectedSpawnPoint = SpawnPoints[rand];
 
 	if (!selectedSpawnPoint)
 		return;
 
 	FActorSpawnParameters spawnParameters;
 	spawnParameters.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AdjustIfPossibleButAlwaysSpawn;
-	AEnemy* enemy = GetWorld()->SpawnActor<AEnemy>(EnemyClass, selectedSpawnPoint->GetActorLocation(), selectedSpawnPoint->GetActorRotation(), spawnParameters);
+	AEnemy* enemy = GetWorld()->SpawnActor<AEnemy>(EnemyClass, selectedSpawnPoint->GetSpawnPointInVolume(), selectedSpawnPoint->GetActorRotation(), spawnParameters);
 	enemy->SetDirector(this);
 
 	++CurrentEnemyCount;
