@@ -16,5 +16,7 @@ AEnemySpawnPoint::AEnemySpawnPoint()
 
 FVector AEnemySpawnPoint::GetSpawnPointInVolume()
 {
-	return UKismetMathLibrary::RandomPointInBoundingBox(SpawnVolume->GetComponentLocation(), SpawnVolume->GetScaledBoxExtent());
+	FVector randomPoint = UKismetMathLibrary::RandomPointInBoundingBox(SpawnVolume->GetComponentLocation(), SpawnVolume->GetScaledBoxExtent());
+	randomPoint.Z = SpawnVolume->GetComponentLocation().Z;
+	return randomPoint;
 }
